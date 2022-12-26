@@ -71,7 +71,16 @@ class tsa():
 
         return numpy.array(x,dtype=numpy.float64).reshape(-1,lagged),numpy.array(y,dtype=numpy.float64).reshape(-1,forecast)
         
-
+        
+    def forecast_adjusted(y_pred,skip,forecast):
+        x = []
+        for i in range(int(forecast/skip)):
+            try:
+                x = x+list(y_pred[i][:skip])
+            except:
+                print('exception occurred')
+        return x
+    
 
     def lagged_prediction(dataset,val,shape,skip=1):
         
@@ -247,14 +256,14 @@ class tsa():
         
     #                 n = int(round(len(dataset)*train_test_split))
                     
-                    x,y = create_dataset(dataset,skip=skip,lagged=lagged,forecast=forecast)
+                    x,y = self.create_dataset(dataset,skip=skip,lagged=lagged,forecast=forecast)
 
                     X_train, X_test, y_train, y_test = train_test_split(x,y,test_size=test_split,shuffle=False)
                     X_train, X_val, y_train, y_val = train_test_split(X_train,y_train,test_size=validation_split,shuffle=False)
 
 
-    #                 X_train,y_train = create_dataset(dataset[:-n],skip=skip,lagged=lagged,forecast=forecast)
-    #                 X_test,y_test = create_dataset(dataset[-n:],skip=skip,lagged=lagged,forecast=forecast)
+    #                 X_train,y_train = self.create_dataset(dataset[:-n],skip=skip,lagged=lagged,forecast=forecast)
+    #                 X_test,y_test = self.create_dataset(dataset[-n:],skip=skip,lagged=lagged,forecast=forecast)
                     
                     X_test = X_test[:n_test]
                     y_test = y_test[:n_test]
@@ -265,7 +274,7 @@ class tsa():
 
                         
                     
-                    X_train,X_test,X_val = lstm_reshape(X_train),lstm_reshape(X_test),lstm_reshape(X_val)
+                    X_train,X_test,X_val = self.lstm_reshape(X_train),self.lstm_reshape(X_test),self.lstm_reshape(X_val)
                     
                     
                         
@@ -305,7 +314,7 @@ class tsa():
                     shape = (1,1,-1)
 
 
-                    x = lstm_reshape(X_test[0])
+                    x = self.lstm_reshape(X_test[0])
                     y_hat = []
 
                     for i in range(len(y_test)):
@@ -320,10 +329,10 @@ class tsa():
     #                     except:
     #                         y_hat = y_hat+list(val[0])
                             
-                        x = lagged_prediction(x,val,shape,skip=skip)
+                        x = self.lagged_prediction(x,val,shape,skip=skip)
                     
-                    y_test = forecast_adjusted(y_test,skip=skip,forecast=len(y_test))
-                    y_hat = forecast_adjusted(y_hat,skip=skip,forecast=len(y_test))
+                    y_test = self.forecast_adjusted(y_test,skip=skip,forecast=len(y_test))
+                    y_hat = self.forecast_adjusted(y_hat,skip=skip,forecast=len(y_test))
                     
                     
                     param_values = {
