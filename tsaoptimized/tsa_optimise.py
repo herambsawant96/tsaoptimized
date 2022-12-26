@@ -19,7 +19,7 @@ class tsa():
 #         from sklearn.model_selection import train_test_split
           pass
 
-    def create_dataset(dataset,skip=1,lagged=1,forecast=1):
+    def create_dataset(self,dataset,skip=1,lagged=1,forecast=1):
         
         '''
         
@@ -73,7 +73,7 @@ class tsa():
         return numpy.array(x,dtype=numpy.float64).reshape(-1,lagged),numpy.array(y,dtype=numpy.float64).reshape(-1,forecast)
         
         
-    def forecast_adjusted(y_pred,skip,forecast):
+    def forecast_adjusted(self,y_pred,skip,forecast):
         x = []
         for i in range(int(forecast/skip)):
             try:
@@ -83,7 +83,7 @@ class tsa():
         return x
     
 
-    def lagged_prediction(dataset,val,shape,skip=1):
+    def lagged_prediction(self,dataset,val,shape,skip=1):
         
         '''
         removing first values from x and adding val at the end
@@ -131,7 +131,7 @@ class tsa():
 
 
 
-    def lstm_reshape(x):
+    def lstm_reshape(self,x):
         #  [samples, timesteps, features].
         if numpy.ndim(x)==1:
             x = x.reshape(tuple([1]+[1]+[x.shape[-1]]))
@@ -143,7 +143,7 @@ class tsa():
 
 
 
-    def optimise_model(dataset, param,n_train = None,n_test=100,epochs=50):
+    def optimise_model(self,dataset, param,n_train = None,n_test=100,epochs=50):
         
             
         '''
