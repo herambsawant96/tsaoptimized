@@ -1,5 +1,6 @@
 import numpy
 import pandas
+import tensorflow
 from tensorflow.keras import layers, Sequential
 from tensorflow.keras.models import load_model
 from tensorflow.keras.callbacks import EarlyStopping
