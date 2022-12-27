@@ -562,13 +562,14 @@ class tsa():
 
 
             '''
-            if y_true ==None:
-                pass
-            else:
+            try:
                 if y_true.ndim >1:
                     y_true = numpy.array([i[0] for i in y_true])
                     
                 forecast = len(y_true)
+                
+            except:
+                pass
                     
                
 
