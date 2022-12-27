@@ -536,7 +536,7 @@ class tsa():
 
 
 
-    def predict(x,model,y_true = None,forecast = 10):
+    def predict(self,x,model,y_true = None,forecast = 10):
 
             '''
             returns a y_predict array that is predicted from single x input upto forecast number.
