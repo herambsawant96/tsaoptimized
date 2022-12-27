@@ -389,13 +389,13 @@ class tsa():
             return numpy.sqrt(mean_squared_error(y_true,y_pred))
 
         if loss == 'mse':
-            loss = mean_squared_error()
+            loss = mean_squared_error
             loss_str = 'mean_squared_error'
         elif loss == 'mae':
-            loss = mean_absolute_error()
+            loss = mean_absolute_error
             loss_str = 'mean_absolute_error'
         elif loss == 'rmse':
-            loss = rmse()
+            loss = rmse
             loss_str = 'root_mean_squared_error'
         else:
             raise ValueError('invalid argument given in loss parameter')
