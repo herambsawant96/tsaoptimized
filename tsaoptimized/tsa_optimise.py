@@ -441,7 +441,7 @@ class tsa():
         
         '''
         dataframe = self.get_models_dataframe(loss=loss)
-        best = dataframe.iloc[:,1]
+        best = dataframe.iloc[:1,:]
 
         n = 0
         for i in self.record:
