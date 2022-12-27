@@ -367,8 +367,7 @@ class tsa():
             return self.record
 
 
-    def get_best_model(self):
-        pass
+
 
     def get_models_dataframe(self,loss='mse'):
         '''
@@ -422,6 +421,36 @@ class tsa():
 
         return dataframe
 
+    
+    def get_best_model(self,loss='mse'):
+        
+        '''
+        returns param dictionary of the best model
+        
+        Parameters
+        ----------
+        loss : str
+            valid inputs :
+
+            mse  :  mean squared error
+            mae  :  mean absolute error
+            rmse :  root mean squared error
+
+        return :
+            param : dict
+        
+        '''
+        dataframe = self.get_models_dataframe(loss=loss)
+        best = dataframe.iloc[:,1]
+
+        n = 0
+        for i in self.record:
+            if i[0]['model_layers'][0] == [1,int(best['model_layers'])] and i[0]['lagged'] == [int(best(['lagged']))] and i[0]['skip']==[int(best['skip'])] and i[0]['forecast'] ==[int(best['forecast'])]:
+                break
+                
+            n+=1
+
+        return self.record[n][0]
 
     
     def model_dataset(self,dataset,param):
