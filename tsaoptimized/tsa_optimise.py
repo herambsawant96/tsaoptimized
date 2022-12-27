@@ -562,11 +562,14 @@ class tsa():
 
 
             '''
+            y_on = False
+            
             try:
                 if y_true.ndim >1:
                     y_true = numpy.array([i[0] for i in y_true])
                     
                 forecast = len(y_true)
+                y_on = True
                 
             except:
                 pass
@@ -582,7 +585,7 @@ class tsa():
                 x = self.lagged_prediction(x,val,shape=shape)
                 y_hat.append(val)
 
-            if y_true !=None:
+            if y_on ==True:
                 return y_true, y_hat
 
             else:
