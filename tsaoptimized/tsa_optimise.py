@@ -6,18 +6,15 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.callbacks import EarlyStopping
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error, mean_squared_error
 
 
 class tsa():
     def __init__(self):
-#         import numpy
-#         import pandas
-#         from tensorflow.keras import layers, Sequential
-#         from tensorflow.keras.models import load_model
-#         from tensorflow.keras.callbacks import EarlyStopping
-#         from sklearn.preprocessing import StandardScaler
-#         from sklearn.model_selection import train_test_split
-          pass
+
+        self.record = None
+        self.best_param = None
+#         
 
     def create_dataset(self,dataset,skip=1,lagged=1,forecast=1):
         
@@ -185,11 +182,9 @@ class tsa():
             example.
                 
                 param = {
-                        'train_test_split': [0.04221635883905013],
-                        'validation_split': [0.2],
-
+                        'train_test_split': [0.3],
+                        'validation_split': [0.3],
                         'model_layers' : [[1,5],[1,20],[1,40],[1,80],[1,130]], 
-
                         'skip': [1,10,30],
                         'lagged': [65,130,170], 
                         'forecast': [5,20,30]
@@ -353,8 +348,162 @@ class tsa():
                     return_param.append([param_values,y_test,y_hat])
                     
                     
-            
+        self.record = return_param  
         return return_param
+
+
+    def get_record(self):
+        '''
+        Get the optimised model
+
+        return :
+
+            record : list of models
+        '''
+        if self.record == None:
+            raise KeyError('No model found, please run optimise_model')
+
+        else:
+            return self.record
+
+
+    def get_best_model(self):
+        pass
+
+    def get_models_dataframe(self,loss='mse'):
+        '''
+        returns a dataframe of consisiting the models sorted from best to worse.
+
+        Parameters
+        ----------
+        loss : str
+            valid inputs :
+
+            mse  :  mean squared error
+            mae  :  mean absolute error
+            rmse :  root mean squared error
+
+        return :
+            dataframe
+        '''
+        def rmse(y_true,y_pred):
+            return numpy.sqrt(mean_squared_error(y_true,y_pred))
+
+        if loss == 'mse':
+            loss = mean_squared_error()
+            loss_str = 'mean_squared_error'
+        elif loss == 'mae':
+            loss = mean_absolute_error()
+            loss_str = 'mean_absolute_error'
+        elif loss == 'rmse':
+            loss = rmse()
+            loss_str = 'root_mean_squared_error'
+        else:
+            raise ValueError('invalid argument given in loss parameter')
+        
+
+        if self.record == None:
+            raise KeyError('No model found, please run optimise_model')
+
+        loss_result, model, lag, skip, forecast = [],[],[],[],[]
+        for i in self.record:
+            try:
+                loss_result.append(mean_squared_error(i[1],i[2]))
+                model.append(i[0]['model_layers'][0][1])
+                lag.append(i[0]['lagged'][0])
+                skip.append(i[0]['skip'][0])
+                forecast.append(i[0]['forecast'][0])
+            except:
+                pass
+        
+        dataframe = pd.DataFrame({'model_layers':model,'lagged':lag,loss_str:loss_result,'skip':skip,'forecast':forecast})
+
+        dataframe.sort_values(by=loss_str,inplace=True)
+
+        return dataframe
+
+
+    
+    def model_dataset(self,dataset,param):
+
+        '''
+
+        given the parameters modifies and returns a suitable dataset for LSTM model
+
+        Parameters
+        ----------
+        
+        dataset : numpy_array 1d
+            
+            dataset that needs to be made that is suitable for the LSTM model
+            
+        
+        param : dict
+        
+            'train_test_split': list
+                    a list of values between 0-1 defining train test split. split is not random
+                
+            'validation_split': list
+                    a list of values between 0-1 defining validation split for model validation. split is not random
+
+            'model_layers' : 2d list
+                    a list containing [number_of_layers, number_of_LSTM_nodes]
+                    
+            skip : list
+                a list of integer values, skip numbers between each value of dataset
+                eg. if skip = 2:
+                        [1,2,3], [3,4,5], [5,6,7]
+
+            lagged : list
+                a list of integer values. size of the values of the dataset
+                eg. if lagged = 2:
+                        [1,2], [3,4], [5,6]
+
+            forecast : list
+                a list of integer values, number of t+ time to forecast in dataset
+
+
+            example.
+                
+                param = {
+                        'train_test_split': [0.3],
+                        'validation_split': [0.3],
+
+                        'model_layers' : [[1,5]], 
+
+                        'skip': [1],
+                        'lagged': [30], 
+                        'forecast': [1]
+
+                    }
+        
+        return :
+            
+            data : dict
+                the dictionary named data contains :
+                            {'train'      : [X_train,y_train],
+                            'validataion' : [X_val,y_val],
+                            'test'        : [X_test,y_test]}
+
+        '''
+    
+        x,y = self.create_dataset(dataset,skip=param['skip'][0],lagged=param['lagged'][0],forecast=param['forecast'][0])
+    
+        X_train, X_test, y_train, y_test = train_test_split(x,y,test_size=param['train_test_split'][0],shuffle=False)
+        X_train, X_val, y_train, y_val = train_test_split(X_train,y_train,test_size=param['validation_split'][0],shuffle=False)
+        
+        X_train,X_val,X_test = self.lstm_reshape(X_train),self.lstm_reshape(X_val),self.lstm_reshape(X_test)
+        
+    
+        
+        data = {
+            'train': [X_train,y_train],
+            'validataion' : [X_val,y_val],
+            'test' : [X_test,y_test]
+        }
+        
+        
+        return data
 
 
 
