@@ -562,6 +562,12 @@ class tsa():
 
 
             '''
+            if y_true !=None:
+                if y_true.ndim >1:
+                    y_true = numpy.array([i[0] for i in y_true])
+                    forecast = len(y_true)
+                    
+               
 
             shape = x.shape
             y_hat = []
@@ -573,9 +579,6 @@ class tsa():
                 y_hat.append(val)
 
             if y_true !=None:
-                if y_true.ndim >1:
-                    y_true = numpy.array([i[0] for i in y_true])
-
                 return y_true, y_hat
 
             else:
