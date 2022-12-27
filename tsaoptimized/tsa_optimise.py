@@ -415,7 +415,7 @@ class tsa():
             except:
                 pass
         
-        dataframe = pd.DataFrame({'model_layers':model,'lagged':lag,loss_str:loss_result,'skip':skip,'forecast':forecast})
+        dataframe = pandas.DataFrame({'model_layers':model,'lagged':lag,loss_str:loss_result,'skip':skip,'forecast':forecast})
 
         dataframe.sort_values(by=loss_str,inplace=True)
 
