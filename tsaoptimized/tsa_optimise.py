@@ -536,7 +536,50 @@ class tsa():
 
 
 
+    def predict(x,model,y_true = None,forecast = 10):
 
+            '''
+            returns a y_predict array that is predicted from single x input upto forecast number.
+
+            Parameters
+            ----------
+
+            x : array like
+                single input that is to be given into the model
+
+                Note : the array can have many features but has only one time data
+
+            model : tensorflow LSTM model
+                a trained model that is to be used for prediction
+
+            y_true : array like
+                default None
+                if provided true data will be provided with the y predict
+
+            forecast : int
+                number of times the model is going to forecast
+                Note : if the y_true is provided then it overrides forecast input
+
+
+            '''
+
+            shape = x.shape
+            y_hat = []
+
+            for i in range(forecast):
+
+                val = model.predict(x)
+                x = self.lagged_prediction(x,val,shape=shape)
+                y_hat.append(val)
+
+            if y_true !=None:
+                if y_true.ndim >1:
+                    y_true = numpy.array([i[0] for i in y_true])
+
+                return y_true, y_hat
+
+            else:
+                return y_hat
 
 
 
