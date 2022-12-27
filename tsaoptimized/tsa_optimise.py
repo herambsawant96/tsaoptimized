@@ -13,7 +13,7 @@ class tsa():
     def __init__(self):
 
         self.record = None
-        self.best_param = None
+        
 #         
 
     def create_dataset(self,dataset,skip=1,lagged=1,forecast=1):
